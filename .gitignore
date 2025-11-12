@@ -1,0 +1,14 @@
+# Arquivos compilados
+*.o
+*.obj
+*.exe
+lagrange
+
+# Arquivos temporários
+*~
+*.swp
+.DS_Store
+
+# Diretórios de build
+build/
+dist/
