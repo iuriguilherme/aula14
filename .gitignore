@@ -1,3 +1,12 @@
+# Arquivos compilados
+lagrange
+
+# Diretórios de build
+dist/
+
+# CodeQL
+_codeql_detected_source_root
+
 # Prerequisites
 *.d
 
