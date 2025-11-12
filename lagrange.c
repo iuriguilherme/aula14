@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
         filename[MAX_LINE - 1] = '\0';
     } else {
         printf("Digite o nome do arquivo de entrada: ");
-        if (scanf("%s", filename) != 1) {
+        if (scanf("%255s", filename) != 1) {
             printf("Erro ao ler o nome do arquivo.\n");
             return 1;
         }
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
         double x;
         if (scanf("%lf", &x) != 1) {
             // Limpar o buffer se não conseguiu ler um número
-            if (scanf("%s", &choice) != 1) {
+            if (scanf("%1s", &choice) != 1) {
                 break;
             }
             if (choice == 'q' || choice == 'Q') {
