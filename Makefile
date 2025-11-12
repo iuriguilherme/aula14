@@ -2,28 +2,38 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -O2
-TARGET = lagrange
-SOURCES = lagrange.c
-OBJECTS = $(SOURCES:.c=.o)
+SRCDIR = src
+BUILDDIR = build
+TARGET = $(BUILDDIR)/lagrange
+SOURCES = $(SRCDIR)/lagrange.c
+OBJDIR = obj
+OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))
 
 # Regra padrão
 all: $(TARGET)
 
 # Compilar o programa
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS) | $(BUILDDIR)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJECTS) -lm
 
 # Compilar arquivos objeto
-%.o: %.c
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# Criar diretórios se não existirem
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
 
 # Limpar arquivos compilados
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -rf $(OBJDIR) $(BUILDDIR)
 
 # Executar com arquivo de exemplo
 run: $(TARGET)
-	./$(TARGET) pontos.txt
+	$(TARGET) pontos.txt
 
 # Ajuda
 help:
