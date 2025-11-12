@@ -1,12 +1,12 @@
-#include "int_arrays.h"
+#include "coordinate_arrays.h"
 #include <stdlib.h>
 
-int criar_int_array(IntArray *arr, size_t size) {
+int criar_coordinate_array(CoordinateArray *arr, size_t size) {
     if (arr == NULL || size == 0) {
         return 0;
     }
     
-    arr->array = (int *)malloc(size * sizeof(int));
+    arr->array = (Coordinate *)malloc(size * sizeof(Coordinate));
     
     if (arr->array == NULL) {
         return 0;
@@ -18,12 +18,12 @@ int criar_int_array(IntArray *arr, size_t size) {
     return 1;
 }
 
-int realocar_int_array(IntArray *arr, size_t new_size) {
+int realocar_coordinate_array(CoordinateArray *arr, size_t new_size) {
     if (arr == NULL || arr->array == NULL) {
         return 0;
     }
     
-    int *temp = (int *)realloc(arr->array, new_size * sizeof(int));
+    Coordinate *temp = (Coordinate *)realloc(arr->array, new_size * sizeof(Coordinate));
     
     if (temp == NULL) {
         return 0;
@@ -38,14 +38,14 @@ int realocar_int_array(IntArray *arr, size_t new_size) {
     return 1;
 }
 
-int inserir_int_array(IntArray *arr, int value) {
+int inserir_coordinate_array(CoordinateArray *arr, Coordinate value) {
     if (arr == NULL || arr->array == NULL) {
         return 0;
     }
     
     if (arr->count >= arr->size) {
         size_t new_size = arr->size * 2;
-        if (!realocar_int_array(arr, new_size)) {
+        if (!realocar_coordinate_array(arr, new_size)) {
             return 0;
         }
     }
@@ -56,18 +56,18 @@ int inserir_int_array(IntArray *arr, int value) {
     return 1;
 }
 
-int inserir_int_array_indice(IntArray *arr, size_t index, int value) {
+int inserir_coordinate_array_indice(CoordinateArray *arr, size_t index, Coordinate value) {
     if (arr == NULL || arr->array == NULL) {
         return 0;
     }
     
     if (index > arr->count) {
-        index = arr->count;
+        return 0;
     }
     
     if (arr->count >= arr->size) {
         size_t new_size = arr->size * 2;
-        if (!realocar_int_array(arr, new_size)) {
+        if (!realocar_coordinate_array(arr, new_size)) {
             return 0;
         }
     }
