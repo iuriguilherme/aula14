@@ -3,11 +3,13 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -O2
 SRCDIR = src
+INCDIR = include
 BUILDDIR = build
 TARGET = $(BUILDDIR)/lagrange
-SOURCES = $(SRCDIR)/lagrange.c
+SOURCES = $(SRCDIR)/main.c
 OBJDIR = obj
 OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))
+CFLAGS += -I$(INCDIR)
 
 # Regra padrão
 all: $(TARGET)

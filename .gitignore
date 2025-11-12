@@ -1,8 +1,9 @@
-# Arquivos compilados
-lagrange
+## Linux
+.*
+!.gitignore
 
-# Diretórios de build
-dist/
+## Documentação
+*.txt
 
 # CodeQL
 _codeql_detected_source_root
@@ -76,17 +77,15 @@ build/
 bin/
 obj/
 out/
+dist/
 
 # CMake
 CMakeFiles/
-CMakeCache.txt
 cmake_install.cmake
 Makefile
 *.cmake
 
 # Autotools
-.deps/
-.libs/
 *.log
 *.trs
 config.h
