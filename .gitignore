@@ -12,3 +12,6 @@ lagrange
 # Diretórios de build
 build/
 dist/
+
+# CodeQL
+_codeql_detected_source_root
