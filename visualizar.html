@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Interpolação de Lagrange</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #1976D2;
+        }
+        #chartContainer {
+            position: relative;
+            height: 500px;
+            margin-top: 20px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        .stat-card h4 {
+            margin: 0 0 8px 0;
+            color: #495057;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        .stat-card p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #212529;
+        }
+        .error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            border-radius: 4px;
+            color: #c62828;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔢 Interpolação Polinomial de Lagrange</h1>
+    <div class="subtitle">Visualização Interativa de Dados</div>
+    
+    <div class="container">
+        <div class="info-box">
+            <h3>Como usar:</h3>
+            <p>1. Execute o programa: <code>make run</code></p>
+            <p>2. Após gerar ou calcular a interpolação, o arquivo <strong>interpolacao.json</strong> será criado</p>
+            <p>3. Abra este arquivo HTML no navegador para visualizar o gráfico</p>
+        </div>
+
+        <div id="error-message" class="error" style="display: none;">
+            <strong>Erro:</strong> Não foi possível carregar o arquivo <strong>interpolacao.json</strong>.
+            <br>Certifique-se de executar o programa primeiro.
+        </div>
+
+        <div id="stats" class="stats" style="display: none;">
+            <div class="stat-card">
+                <h4>Pontos Originais</h4>
+                <p id="stat-original">-</p>
+            </div>
+            <div class="stat-card">
+                <h4>Pontos Interpolados</h4>
+                <p id="stat-interpolated">-</p>
+            </div>
+            <div class="stat-card">
+                <h4>Intervalo X</h4>
+                <p id="stat-range">-</p>
+            </div>
+            <div class="stat-card">
+                <h4>Grau do Polinômio</h4>
+                <p id="stat-degree">-</p>
+            </div>
+        </div>
+
+        <div id="chartContainer">
+            <canvas id="interpolationChart"></canvas>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2196F3;"></div>
+                <span>Curva Interpolada</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #f44336;"></div>
+                <span>Pontos Originais</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Interpolador Polinomial de Lagrange</strong></p>
+            <p>Algoritmos II - IFRS Campus Veranópolis</p>
+            <p>© 2025 Iuri Guilherme</p>
+        </div>
+    </div>
+
+    <script>
+        let chart = null;
+
+        async function loadData() {
+            try {
+                const response = await fetch('interpolacao.json');
+                if (!response.ok) {
+                    throw new Error('Arquivo não encontrado');
+                }
+                const data = await response.json();
+                displayChart(data);
+                updateStats(data);
+            } catch (error) {
+                document.getElementById('error-message').style.display = 'block';
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        function updateStats(data) {
+            const statsDiv = document.getElementById('stats');
+            statsDiv.style.display = 'grid';
+
+            document.getElementById('stat-original').textContent = data.originalPoints.length;
+            document.getElementById('stat-interpolated').textContent = data.interpolatedPoints.length;
+            
+            const xValues = data.originalPoints.map(p => p.x);
+            const xMin = Math.min(...xValues);
+            const xMax = Math.max(...xValues);
+            document.getElementById('stat-range').textContent = `[${xMin.toFixed(2)}, ${xMax.toFixed(2)}]`;
+            
+            document.getElementById('stat-degree').textContent = data.originalPoints.length - 1;
+        }
+
+        function displayChart(data) {
+            const ctx = document.getElementById('interpolationChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Curva Interpolada',
+                            data: data.interpolatedPoints,
+                            borderColor: '#2196F3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            showLine: true,
+                            pointRadius: 0,
+                            borderWidth: 2,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Pontos Originais',
+                            data: data.originalPoints,
+                            backgroundColor: '#f44336',
+                            borderColor: '#d32f2f',
+                            pointRadius: 8,
+                            pointHoverRadius: 10,
+                            showLine: false,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Interpolação Polinomial de Lagrange',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `(${context.parsed.x.toFixed(4)}, ${context.parsed.y.toFixed(4)})`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'x',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y = L(x)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'xy',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Load data when page loads
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>
