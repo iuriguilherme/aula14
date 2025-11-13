@@ -17,7 +17,9 @@ MAIN_SOURCES = $(SRCDIR)/main.c \
                $(SRCDIR)/coordinate_arrays.c \
                $(SRCDIR)/file_handler.c \
                $(SRCDIR)/ordering.c \
-               $(SRCDIR)/generator.c
+               $(SRCDIR)/generator.c \
+               $(SRCDIR)/lagrange.c \
+               $(SRCDIR)/init.c
 
 # Source files for tests
 TEST_SOURCES = $(TESTDIR)/test_main.c \
@@ -26,6 +28,7 @@ TEST_SOURCES = $(TESTDIR)/test_main.c \
                $(TESTDIR)/test_coordinate_arrays.c \
                $(TESTDIR)/test_ordering.c \
                $(TESTDIR)/test_file_handler.c \
+               $(TESTDIR)/test_generator.c \
                $(TESTDIR)/test_runner.c
 
 # Shared library sources (everything except main.c and test_main.c)
@@ -34,7 +37,9 @@ LIB_SOURCES = $(SRCDIR)/int_arrays.c \
               $(SRCDIR)/coordinate_arrays.c \
               $(SRCDIR)/file_handler.c \
               $(SRCDIR)/ordering.c \
-              $(SRCDIR)/generator.c
+              $(SRCDIR)/generator.c \
+              $(SRCDIR)/lagrange.c \
+              $(SRCDIR)/init.c
 
 OBJDIR = obj
 MAIN_OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(MAIN_SOURCES))
@@ -77,7 +82,7 @@ run: $(TARGET)
 	$(TARGET)
 
 # Compilar em modo debug com mensagens verbose
-debug: CFLAGS = $(DEBUG_CFLAGS)
+debug: CFLAGS = $(DEBUG_CFLAGS) -I$(INCDIR)
 debug: clean $(TARGET)
 	$(TARGET)
 

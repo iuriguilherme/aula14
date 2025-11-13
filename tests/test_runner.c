@@ -6,6 +6,7 @@ extern int test_double_arrays(void);
 extern int test_coordinate_arrays(void);
 extern int test_ordering(void);
 extern int test_file_operations(void);
+extern int test_generator(void);
 
 int run_all_tests(void) {
     printf("\n========================================\n");
@@ -28,6 +29,9 @@ int run_all_tests(void) {
     total_suites++;
     
     if (test_file_operations()) total_passed++;
+    total_suites++;
+    
+    if (test_generator()) total_passed++;
     total_suites++;
     
     printf("\n========================================\n");

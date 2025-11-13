@@ -1,66 +1,26 @@
-/*
- * Interpolador Polinomial de Lagrange
- * 
- * Este programa lê pares de valores (x, y) de um arquivo e calcula
- * o polinômio interpolador usando o método de Lagrange.
- * Permite calcular valores interpolados para novos pontos.
- */
-
+#include "lagrange.h"
+#include "config.h"
+#include "structs.h"
+#include "coordinate_arrays.h"
+#include "file_handler.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define MAX_POINTS 100
-#define MAX_LINE 256
-
-typedef struct {
-    double x;
-    double y;
-} Point;
-
-/*
- * Lê os pontos do arquivo de entrada
- * Formato esperado: cada linha contém "x y" separados por espaço
- */
-int read_points(const char *filename, Point points[], int *n) {
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Erro ao abrir o arquivo: %s\n", filename);
-        return 0;
-    }
-    
-    *n = 0;
-    char line[MAX_LINE];
-    
-    while (fgets(line, sizeof(line), file) && *n < MAX_POINTS) {
-        // Ignorar linhas vazias e comentários
-        if (line[0] == '#' || line[0] == '\n') {
-            continue;
-        }
-        
-        if (sscanf(line, "%lf %lf", &points[*n].x, &points[*n].y) == 2) {
-            (*n)++;
-        }
-    }
-    
-    fclose(file);
-    return 1;
-}
 
 /*
  * Calcula o valor interpolado usando o método de Lagrange
  * L(x) = Σ y_i * l_i(x)
  * onde l_i(x) = Π (x - x_j) / (x_i - x_j) para j ≠ i
  */
-double lagrange_interpolation(Point points[], int n, double x) {
+double lagrange_interpolation(CoordinateArray *arr, double x) {
     double result = 0.0;
     
-    for (int i = 0; i < n; i++) {
-        double term = points[i].y;
+    for (size_t i = 0; i < arr->count; i++) {
+        double term = arr->array[i].y;
         
-        for (int j = 0; j < n; j++) {
+        for (size_t j = 0; j < arr->count; j++) {
             if (i != j) {
-                term *= (x - points[j].x) / (points[i].x - points[j].x);
+                term *= (x - arr->array[j].x) / (arr->array[i].x - arr->array[j].x);
             }
         }
         
@@ -73,33 +33,33 @@ double lagrange_interpolation(Point points[], int n, double x) {
 /*
  * Exibe o polinômio de Lagrange em forma simbólica
  */
-void display_polynomial(Point points[], int n) {
+void display_polynomial(CoordinateArray *arr) {
     printf("\nPolinômio Interpolador de Lagrange:\n");
     printf("L(x) = ");
     
-    for (int i = 0; i < n; i++) {
-        if (i > 0 && points[i].y >= 0) {
+    for (size_t i = 0; i < arr->count; i++) {
+        if (i > 0 && arr->array[i].y >= 0) {
             printf("+ ");
         }
         
-        printf("%.4f", points[i].y);
+        printf("%.4f", arr->array[i].y);
         
         // Exibir os termos l_i(x)
         printf(" * [");
         int first = 1;
-        for (int j = 0; j < n; j++) {
+        for (size_t j = 0; j < arr->count; j++) {
             if (i != j) {
                 if (!first) {
                     printf(" * ");
                 }
                 printf("(x - %.2f)/(%.2f - %.2f)", 
-                       points[j].x, points[i].x, points[j].x);
+                       arr->array[j].x, arr->array[i].x, arr->array[j].x);
                 first = 0;
             }
         }
         printf("]");
         
-        if (i < n - 1) {
+        if (i < arr->count - 1) {
             printf("\n       ");
         }
     }
@@ -109,82 +69,123 @@ void display_polynomial(Point points[], int n) {
 /*
  * Exibe os pontos dados
  */
-void display_points(Point points[], int n) {
+void display_points(CoordinateArray *arr) {
     printf("\nPontos fornecidos:\n");
     printf("  i  |    x    |    y\n");
     printf("-----|---------|----------\n");
-    for (int i = 0; i < n; i++) {
-        printf(" %3d | %7.2f | %8.4f\n", i, points[i].x, points[i].y);
+    for (size_t i = 0; i < arr->count; i++) {
+        printf(" %3zu | %7.2f | %8.4f\n", i, arr->array[i].x, arr->array[i].y);
     }
 }
 
-int main(int argc, char *argv[]) {
-    Point points[MAX_POINTS];
-    int n;
-    char filename[MAX_LINE];
+/*
+ * Gera um valor padrão de x baseado no intervalo dos pontos dados
+ * Retorna o ponto médio entre o menor e maior valor de x
+ */
+double gerar_x_padrao(CoordinateArray *arr) {
+    if (arr->count == 0) {
+        return 0.0;
+    }
     
-    printf("=== Interpolador Polinomial de Lagrange ===\n\n");
+    double x_min = arr->array[0].x;
+    double x_max = arr->array[0].x;
     
-    // Verificar argumentos da linha de comando
-    if (argc > 1) {
-        strncpy(filename, argv[1], MAX_LINE - 1);
-        filename[MAX_LINE - 1] = '\0';
-    } else {
-        printf("Digite o nome do arquivo de entrada: ");
-        if (scanf("%255s", filename) != 1) {
-            printf("Erro ao ler o nome do arquivo.\n");
-            return 1;
+    for (size_t i = 1; i < arr->count; i++) {
+        if (arr->array[i].x < x_min) {
+            x_min = arr->array[i].x;
+        }
+        if (arr->array[i].x > x_max) {
+            x_max = arr->array[i].x;
         }
     }
     
-    // Ler os pontos do arquivo
-    if (!read_points(filename, points, &n)) {
-        return 1;
+    return (x_min + x_max) / 2.0;
+}
+
+void executar_lagrange(const char *nome_arquivo) {
+    CoordinateArray arr;
+    
+    printf("=== Interpolador Polinomial de Lagrange ===\n\n");
+    
+    // Criar array de coordenadas
+    if (!criar_coordinate_array(&arr, MAX_POINTS)) {
+        printf("Erro ao criar array de coordenadas.\n");
+        return;
     }
     
-    if (n < 2) {
+    // Ler os pontos do arquivo usando file_handler
+    FILE *file = abrir_arquivo(nome_arquivo);
+    if (!file) {
+        printf("Erro ao abrir o arquivo: %s\n", nome_arquivo);
+        free(arr.array);
+        return;
+    }
+    
+    if (ler_coordinate_array(file, &arr) != 1) {
+        printf("Erro ao ler coordenadas do arquivo.\n");
+        fclose(file);
+        free(arr.array);
+        return;
+    }
+    
+    fclose(file);
+    
+    if (arr.count < 2) {
         printf("Erro: São necessários pelo menos 2 pontos para interpolação.\n");
-        return 1;
+        free(arr.array);
+        return;
     }
     
-    printf("Arquivo lido com sucesso! Total de pontos: %d\n", n);
+    printf("Arquivo lido com sucesso! Total de pontos: %zu\n", arr.count);
     
     // Exibir os pontos
-    display_points(points, n);
+    display_points(&arr);
     
     // Exibir o polinômio
-    display_polynomial(points, n);
+    display_polynomial(&arr);
     
     // Menu para calcular valores interpolados
     char choice;
     do {
-        printf("\n--- Calcular valor interpolado ---\n");
-        printf("Digite o valor de x (ou 'q' para sair): ");
+        double x_padrao = gerar_x_padrao(&arr);
         
+        printf("\n--- Calcular valor interpolado ---\n");
+        printf("Digite o valor de x [padrão: %.4f] (ou 'q' para sair): ", x_padrao);
+        
+        char buffer[100];
         double x;
-        if (scanf("%lf", &x) != 1) {
-            // Limpar o buffer se não conseguiu ler um número
-            if (scanf("%1s", &choice) != 1) {
-                break;
-            }
-            if (choice == 'q' || choice == 'Q') {
-                break;
-            }
+        
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            break;
+        }
+        
+        // Check if user wants to quit
+        if (buffer[0] == 'q' || buffer[0] == 'Q') {
+            break;
+        }
+        
+        // Use default if user just pressed Enter
+        if (buffer[0] == '\n') {
+            x = x_padrao;
+            printf("Usando padrão: %.4f\n", x);
+        } else if (sscanf(buffer, "%lf", &x) != 1) {
             printf("Entrada inválida. Tente novamente.\n");
             continue;
         }
         
-        double y = lagrange_interpolation(points, n, x);
+        double y = lagrange_interpolation(&arr, x);
         printf("L(%.4f) = %.6f\n", x, y);
         
         printf("\nDeseja calcular outro valor? (s/n): ");
-        if (scanf(" %c", &choice) != 1) {
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL || 
+            (buffer[0] != 's' && buffer[0] != 'S')) {
             break;
         }
         
-    } while (choice == 's' || choice == 'S');
+    } while (1);
     
     printf("\nPrograma finalizado.\n");
     
-    return 0;
+    // Liberar memória
+    free(arr.array);
 }
