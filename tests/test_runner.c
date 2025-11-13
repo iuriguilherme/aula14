@@ -1,14 +1,15 @@
 #include "tests.h"
 #include <stdio.h>
 
-extern int test_int_arrays(void);
-extern int test_double_arrays(void);
-extern int test_coordinate_arrays(void);
+extern int test_ponto_arrays(void);
 extern int test_ordering(void);
 extern int test_file_operations(void);
 extern int test_generator(void);
 
 int run_all_tests(void) {
+#ifdef DEBUG
+    printf("[DEBUG] run_all_tests: Starting all test suites\n");
+#endif
     printf("\n========================================\n");
     printf("       Running All Tests\n");
     printf("========================================\n");
@@ -16,13 +17,7 @@ int run_all_tests(void) {
     int total_passed = 0;
     int total_suites = 0;
     
-    if (test_int_arrays()) total_passed++;
-    total_suites++;
-    
-    if (test_double_arrays()) total_passed++;
-    total_suites++;
-    
-    if (test_coordinate_arrays()) total_passed++;
+    if (test_ponto_arrays()) total_passed++;
     total_suites++;
     
     if (test_ordering()) total_passed++;
@@ -34,6 +29,9 @@ int run_all_tests(void) {
     if (test_generator()) total_passed++;
     total_suites++;
     
+#ifdef DEBUG
+    printf("[DEBUG] run_all_tests: All test suites completed - %d/%d passed\n", total_passed, total_suites);
+#endif
     printf("\n========================================\n");
     printf("Test Results: %d/%d test suites passed\n", total_passed, total_suites);
     printf("========================================\n\n");

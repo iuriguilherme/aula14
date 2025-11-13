@@ -3,6 +3,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -O2
 DEBUG_CFLAGS = -Wall -Wextra -std=c11 -g -DVERBOSE
+TEST_DEBUG_CFLAGS = -Wall -Wextra -std=c11 -g -DDEBUG
 SRCDIR = src
 TESTDIR = tests
 INCDIR = include
@@ -12,9 +13,7 @@ TEST_TARGET = $(BUILDDIR)/test_suite
 
 # Source files for main program
 MAIN_SOURCES = $(SRCDIR)/main.c \
-               $(SRCDIR)/int_arrays.c \
-               $(SRCDIR)/double_arrays.c \
-               $(SRCDIR)/coordinate_arrays.c \
+               $(SRCDIR)/pontos.c \
                $(SRCDIR)/file_handler.c \
                $(SRCDIR)/ordering.c \
                $(SRCDIR)/generator.c \
@@ -23,18 +22,14 @@ MAIN_SOURCES = $(SRCDIR)/main.c \
 
 # Source files for tests
 TEST_SOURCES = $(TESTDIR)/test_main.c \
-               $(TESTDIR)/test_int_arrays.c \
-               $(TESTDIR)/test_double_arrays.c \
-               $(TESTDIR)/test_coordinate_arrays.c \
+               $(TESTDIR)/test_pontos.c \
                $(TESTDIR)/test_ordering.c \
                $(TESTDIR)/test_file_handler.c \
                $(TESTDIR)/test_generator.c \
                $(TESTDIR)/test_runner.c
 
 # Shared library sources (everything except main.c and test_main.c)
-LIB_SOURCES = $(SRCDIR)/int_arrays.c \
-              $(SRCDIR)/double_arrays.c \
-              $(SRCDIR)/coordinate_arrays.c \
+LIB_SOURCES = $(SRCDIR)/pontos.c \
               $(SRCDIR)/file_handler.c \
               $(SRCDIR)/ordering.c \
               $(SRCDIR)/generator.c \
@@ -90,6 +85,11 @@ debug: clean $(TARGET)
 test: $(TEST_TARGET)
 	$(TEST_TARGET)
 
+# Compilar e executar testes em modo debug
+test-debug: CFLAGS = $(TEST_DEBUG_CFLAGS) -I$(INCDIR)
+test-debug: clean $(TEST_TARGET)
+	$(TEST_TARGET)
+
 # Ajuda
 help:
 	@echo "Uso do Makefile:"
@@ -98,6 +98,7 @@ help:
 	@echo "  make run     - Compila e executa o programa"
 	@echo "  make debug   - Compila em modo debug e executa (com mensagens verbose)"
 	@echo "  make test    - Compila e executa os testes"
+	@echo "  make test-debug - Compila e executa os testes em modo debug"
 	@echo "  make help    - Exibe esta mensagem de ajuda"
 
-.PHONY: all clean run debug test help
+.PHONY: all clean run debug test test-debug help

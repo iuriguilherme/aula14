@@ -1,6 +1,6 @@
 #include "tests.h"
 #include "generator.h"
-#include "coordinate_arrays.h"
+#include "pontos.h"
 #include "file_handler.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,11 +8,17 @@
 #include <sys/stat.h>
 
 int test_generator(void) {
+#ifdef DEBUG
+    printf("[DEBUG] test_generator: Starting test suite\n");
+#endif
     printf("\n--- Testing Generator Functions ---\n");
     int tests_passed = 0;
     int total_tests = 3;
     
     // Test 1: Check if file is created
+#ifdef DEBUG
+    printf("[DEBUG] test_generator: Test 1 - File creation\n");
+#endif
     printf("Test 1: File creation... ");
     const char *test_file = "test_pontos_temp.txt";
     
@@ -21,19 +27,22 @@ int test_generator(void) {
     
     // Since gerar_pontos requires user input, we'll test the file operations directly
     // Create a simple coordinate array and write it
-    CoordinateArray arr;
-    criar_coordinate_array(&arr, 3);
+    PontoArray arr;
+    criar_ponto_array(&arr, 3);
     
-    Coordinate c1 = {1.0, 2.0};
-    Coordinate c2 = {2.0, 4.0};
-    Coordinate c3 = {3.0, 6.0};
+    Ponto c1 = {1.0, 2.0};
+    Ponto c2 = {2.0, 4.0};
+    Ponto c3 = {3.0, 6.0};
     
-    inserir_coordinate_array(&arr, c1);
-    inserir_coordinate_array(&arr, c2);
-    inserir_coordinate_array(&arr, c3);
+    inserir_ponto_array(&arr, c1);
+    inserir_ponto_array(&arr, c2);
+    inserir_ponto_array(&arr, c3);
     
+#ifdef DEBUG
+    printf("[DEBUG] test_generator: Created array with %zu points\n", arr.count);
+#endif
     FILE *file = criar_arquivo(test_file);
-    if (file && escrever_coordinate_array(file, &arr)) {
+    if (file && escrever_ponto_array(file, &arr)) {
         fclose(file);
         
         // Check if file exists
@@ -52,12 +61,15 @@ int test_generator(void) {
     free(arr.array);
     
     // Test 2: Verify file content can be read back
+#ifdef DEBUG
+    printf("[DEBUG] test_generator: Test 2 - File read/write integrity\n");
+#endif
     printf("Test 2: File read/write integrity... ");
-    CoordinateArray arr2;
-    criar_coordinate_array(&arr2, 10);
+    PontoArray arr2;
+    criar_ponto_array(&arr2, 10);
     
     file = abrir_arquivo(test_file);
-    if (file && ler_coordinate_array(file, &arr2) == 0) {
+    if (file && ler_ponto_array(file, &arr2) == 1) {
         fclose(file);
         
         if (arr2.count == 3 &&
@@ -77,6 +89,9 @@ int test_generator(void) {
     free(arr2.array);
     
     // Test 3: File cleanup
+#ifdef DEBUG
+    printf("[DEBUG] test_generator: Test 3 - File cleanup\n");
+#endif
     printf("Test 3: File cleanup... ");
     if (unlink(test_file) == 0) {
         printf("PASSED\n");
@@ -85,6 +100,9 @@ int test_generator(void) {
         printf("FAILED (cleanup error)\n");
     }
     
+#ifdef DEBUG
+    printf("[DEBUG] test_generator: Test suite completed with %d/%d passed\n", tests_passed, total_tests);
+#endif
     printf("\nGenerator tests: %d/%d passed\n", tests_passed, total_tests);
     return tests_passed == total_tests;
 }

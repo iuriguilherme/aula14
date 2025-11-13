@@ -1,7 +1,7 @@
 #include "init.h"
 #include "generator.h"
 #include "file_handler.h"
-#include "coordinate_arrays.h"
+#include "pontos.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,10 +22,10 @@ void inicializar_arquivo(const char *nome_arquivo) {
         needs_generation = 1;
     } else {
         // File exists, try to read coordinates
-        CoordinateArray arr;
-        criar_coordinate_array(&arr, 10);
+        PontoArray arr;
+        criar_ponto_array(&arr, 10);
         
-        int result = ler_coordinate_array(arquivo, &arr);
+        int result = ler_ponto_array(arquivo, &arr);
         fclose(arquivo);
 
         #ifdef VERBOSE

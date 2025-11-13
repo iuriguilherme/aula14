@@ -1,13 +1,13 @@
 #include "generator.h"
 #include "structs.h"
-#include "coordinate_arrays.h"
+#include "pontos.h"
 #include "file_handler.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 // Gera pontos para uma função linear: f(x) = ax + b
-static int gerar_linear(CoordinateArray *arr, int num_pontos) {
+static int gerar_linear(PontoArray *arr, int num_pontos) {
     // Coeficientes aleatórios para a função linear
     double a = ((double)rand() / RAND_MAX) * 10.0 - 5.0; // -5 a 5
     double b = ((double)rand() / RAND_MAX) * 10.0 - 5.0; // -5 a 5
@@ -15,11 +15,11 @@ static int gerar_linear(CoordinateArray *arr, int num_pontos) {
     printf("Gerando função linear: f(x) = %.2fx + %.2f\n", a, b);
     
     for (int i = 0; i < num_pontos; i++) {
-        Coordinate coord;
+        Ponto coord;
         coord.x = ((double)rand() / RAND_MAX) * 20.0 - 10.0; // -10 a 10
         coord.y = a * coord.x + b;
         
-        if (!inserir_coordinate_array(arr, coord)) {
+        if (!inserir_ponto_array(arr, coord)) {
             return 0;
         }
     }
@@ -28,7 +28,7 @@ static int gerar_linear(CoordinateArray *arr, int num_pontos) {
 }
 
 // Gera pontos para uma função quadrática: f(x) = ax² + bx + c
-static int gerar_quadratica(CoordinateArray *arr, int num_pontos) {
+static int gerar_quadratica(PontoArray *arr, int num_pontos) {
     // Coeficientes aleatórios para a função quadrática
     double a = ((double)rand() / RAND_MAX) * 4.0 - 2.0; // -2 a 2
     double b = ((double)rand() / RAND_MAX) * 10.0 - 5.0; // -5 a 5
@@ -37,11 +37,11 @@ static int gerar_quadratica(CoordinateArray *arr, int num_pontos) {
     printf("Gerando função quadrática: f(x) = %.2fx² + %.2fx + %.2f\n", a, b, c);
     
     for (int i = 0; i < num_pontos; i++) {
-        Coordinate coord;
+        Ponto coord;
         coord.x = ((double)rand() / RAND_MAX) * 20.0 - 10.0; // -10 a 10
         coord.y = a * coord.x * coord.x + b * coord.x + c;
         
-        if (!inserir_coordinate_array(arr, coord)) {
+        if (!inserir_ponto_array(arr, coord)) {
             return 0;
         }
     }
@@ -50,7 +50,7 @@ static int gerar_quadratica(CoordinateArray *arr, int num_pontos) {
 }
 
 // Gera pontos para uma função cúbica: f(x) = ax³ + bx² + cx + d
-static int gerar_cubica(CoordinateArray *arr, int num_pontos) {
+static int gerar_cubica(PontoArray *arr, int num_pontos) {
     // Coeficientes aleatórios para a função cúbica
     double a = ((double)rand() / RAND_MAX) * 2.0 - 1.0; // -1 a 1
     double b = ((double)rand() / RAND_MAX) * 4.0 - 2.0; // -2 a 2
@@ -60,11 +60,11 @@ static int gerar_cubica(CoordinateArray *arr, int num_pontos) {
     printf("Gerando função cúbica: f(x) = %.2fx³ + %.2fx² + %.2fx + %.2f\n", a, b, c, d);
     
     for (int i = 0; i < num_pontos; i++) {
-        Coordinate coord;
+        Ponto coord;
         coord.x = ((double)rand() / RAND_MAX) * 10.0 - 5.0; // -5 a 5
         coord.y = a * coord.x * coord.x * coord.x + b * coord.x * coord.x + c * coord.x + d;
         
-        if (!inserir_coordinate_array(arr, coord)) {
+        if (!inserir_ponto_array(arr, coord)) {
             return 0;
         }
     }
@@ -122,8 +122,8 @@ void gerar_pontos(const char *nome_arquivo) {
     }
     
     // Cria array de coordenadas
-    CoordinateArray arr;
-    if (!criar_coordinate_array(&arr, num_pontos)) {
+    PontoArray arr;
+    if (!criar_ponto_array(&arr, num_pontos)) {
         printf("Erro ao criar array de coordenadas!\n");
         return;
     }
@@ -156,7 +156,7 @@ void gerar_pontos(const char *nome_arquivo) {
         return;
     }
     
-    if (!escrever_coordinate_array(arquivo, &arr)) {
+    if (!escrever_ponto_array(arquivo, &arr)) {
         printf("Erro ao escrever no arquivo!\n");
         fclose(arquivo);
         free(arr.array);

@@ -1,7 +1,5 @@
 #include "file_handler.h"
-#include "int_arrays.h"
-#include "double_arrays.h"
-#include "coordinate_arrays.h"
+#include "pontos.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,174 +32,10 @@ FILE* criar_arquivo(const char *nome_arquivo) {
     return abrir_arquivo_modo(nome_arquivo, "w");
 }
 
-int escrever_int_array(FILE *arquivo, IntArray *arr) {
+int escrever_ponto_array(FILE *arquivo, PontoArray *arr) {
     if (arquivo == NULL || arr == NULL || arr->array == NULL) {
 #ifdef VERBOSE
-        printf("[DEBUG] escrever_int_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
-               (void*)arquivo, (void*)arr, arr ? (void*)arr->array : NULL);
-#endif
-        return 0;
-    }
-    
-    for (size_t i = 0; i < arr->count; i++) {
-        fprintf(arquivo, "%d\n", arr->array[i]);
-    }
-    
-#ifdef VERBOSE
-    printf("[DEBUG] escrever_int_array: Successfully wrote %zu integers\n", arr->count);
-#endif
-    return 1;
-}
-
-int ler_int_array(FILE *arquivo, IntArray *arr) {
-    if (arquivo == NULL || arr == NULL) {
-#ifdef VERBOSE
-        printf("[DEBUG] ler_int_array: Invalid parameters (arquivo=%p, arr=%p)\n", 
-               (void*)arquivo, (void*)arr);
-#endif
-        return 0;
-    }
-    
-    arr->count = 0;
-    size_t size = 10;
-    
-    if (!criar_int_array(arr, size)) {
-#ifdef VERBOSE
-        printf("[DEBUG] ler_int_array: Failed to create int array\n");
-#endif
-        return 0;
-    }
-    
-    int value;
-    while (fscanf(arquivo, "%d", &value) == 1) {
-        if (!inserir_int_array(arr, value)) {
-            free(arr->array);
-            arr->array = NULL;
-#ifdef VERBOSE
-            printf("[DEBUG] ler_int_array: Failed to insert value, freed array\n");
-#endif
-            return 0;
-        }
-    }
-    
-#ifdef VERBOSE
-    printf("[DEBUG] ler_int_array: Successfully read %zu integers\n", arr->count);
-#endif
-    return 1;
-}
-
-int anexar_int_array(FILE *arquivo, IntArray *arr) {
-    if (arquivo == NULL || arr == NULL || arr->array == NULL) {
-#ifdef VERBOSE
-        printf("[DEBUG] anexar_int_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
-               (void*)arquivo, (void*)arr, arr ? (void*)arr->array : NULL);
-#endif
-        return 0;
-    }
-    
-    int value;
-    size_t initial_count = arr->count;
-    while (fscanf(arquivo, "%d", &value) == 1) {
-        if (!inserir_int_array(arr, value)) {
-#ifdef VERBOSE
-            printf("[DEBUG] anexar_int_array: Failed to insert value\n");
-#endif
-            return 0;
-        }
-    }
-    
-#ifdef VERBOSE
-    printf("[DEBUG] anexar_int_array: Successfully appended %zu integers\n", arr->count - initial_count);
-#endif
-    return 1;
-}
-
-int escrever_double_array(FILE *arquivo, DoubleArray *arr) {
-    if (arquivo == NULL || arr == NULL || arr->array == NULL) {
-#ifdef VERBOSE
-        printf("[DEBUG] escrever_double_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
-               (void*)arquivo, (void*)arr, arr ? (void*)arr->array : NULL);
-#endif
-        return 0;
-    }
-    
-    for (size_t i = 0; i < arr->count; i++) {
-        fprintf(arquivo, "%lf\n", arr->array[i]);
-    }
-    
-#ifdef VERBOSE
-    printf("[DEBUG] escrever_double_array: Successfully wrote %zu doubles\n", arr->count);
-#endif
-    return 1;
-}
-
-int ler_double_array(FILE *arquivo, DoubleArray *arr) {
-    if (arquivo == NULL || arr == NULL) {
-#ifdef VERBOSE
-        printf("[DEBUG] ler_double_array: Invalid parameters (arquivo=%p, arr=%p)\n", 
-               (void*)arquivo, (void*)arr);
-#endif
-        return 0;
-    }
-    
-    arr->count = 0;
-    size_t size = 10;
-    
-    if (!criar_double_array(arr, size)) {
-#ifdef VERBOSE
-        printf("[DEBUG] ler_double_array: Failed to create double array\n");
-#endif
-        return 0;
-    }
-    
-    double value;
-    while (fscanf(arquivo, "%lf", &value) == 1) {
-        if (!inserir_double_array(arr, value)) {
-            free(arr->array);
-            arr->array = NULL;
-#ifdef VERBOSE
-            printf("[DEBUG] ler_double_array: Failed to insert value, freed array\n");
-#endif
-            return 0;
-        }
-    }
-    
-#ifdef VERBOSE
-    printf("[DEBUG] ler_double_array: Successfully read %zu doubles\n", arr->count);
-#endif
-    return 1;
-}
-
-int anexar_double_array(FILE *arquivo, DoubleArray *arr) {
-    if (arquivo == NULL || arr == NULL || arr->array == NULL) {
-#ifdef VERBOSE
-        printf("[DEBUG] anexar_double_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
-               (void*)arquivo, (void*)arr, arr ? (void*)arr->array : NULL);
-#endif
-        return 0;
-    }
-    
-    double value;
-    size_t initial_count = arr->count;
-    while (fscanf(arquivo, "%lf", &value) == 1) {
-        if (!inserir_double_array(arr, value)) {
-#ifdef VERBOSE
-            printf("[DEBUG] anexar_double_array: Failed to insert value\n");
-#endif
-            return 0;
-        }
-    }
-    
-#ifdef VERBOSE
-    printf("[DEBUG] anexar_double_array: Successfully appended %zu doubles\n", arr->count - initial_count);
-#endif
-    return 1;
-}
-
-int escrever_coordinate_array(FILE *arquivo, CoordinateArray *arr) {
-    if (arquivo == NULL || arr == NULL || arr->array == NULL) {
-#ifdef VERBOSE
-        printf("[DEBUG] escrever_coordinate_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
+        printf("[DEBUG] escrever_ponto_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
                (void*)arquivo, (void*)arr, arr ? (void*)arr->array : NULL);
 #endif
         return 0;
@@ -212,15 +46,15 @@ int escrever_coordinate_array(FILE *arquivo, CoordinateArray *arr) {
     }
     
 #ifdef VERBOSE
-    printf("[DEBUG] escrever_coordinate_array: Successfully wrote %zu coordinates\n", arr->count);
+    printf("[DEBUG] escrever_ponto_array: Successfully wrote %zu pontos\n", arr->count);
 #endif
     return 1;
 }
 
-int ler_coordinate_array(FILE *arquivo, CoordinateArray *arr) {
+int ler_ponto_array(FILE *arquivo, PontoArray *arr) {
     if (arquivo == NULL || arr == NULL) {
 #ifdef VERBOSE
-        printf("[DEBUG] ler_coordinate_array: Invalid parameters (arquivo=%p, arr=%p)\n", 
+        printf("[DEBUG] ler_ponto_array: Invalid parameters (arquivo=%p, arr=%p)\n", 
                (void*)arquivo, (void*)arr);
 #endif
         return 0;
@@ -229,53 +63,53 @@ int ler_coordinate_array(FILE *arquivo, CoordinateArray *arr) {
     arr->count = 0;
     size_t size = 10;
     
-    if (!criar_coordinate_array(arr, size)) {
+    if (!criar_ponto_array(arr, size)) {
 #ifdef VERBOSE
-        printf("[DEBUG] ler_coordinate_array: Failed to create coordinate array\n");
+        printf("[DEBUG] ler_ponto_array: Failed to create ponto array\n");
 #endif
         return 0;
     }
     
-    Coordinate coord;
+    Ponto coord;
     while (fscanf(arquivo, "%lf %lf", &coord.x, &coord.y) == 2) {
-        if (!inserir_coordinate_array(arr, coord)) {
+        if (!inserir_ponto_array(arr, coord)) {
             free(arr->array);
             arr->array = NULL;
 #ifdef VERBOSE
-            printf("[DEBUG] ler_coordinate_array: Failed to insert coordinate, freed array\n");
+            printf("[DEBUG] ler_ponto_array: Failed to insert ponto, freed array\n");
 #endif
             return 0;
         }
     }
     
 #ifdef VERBOSE
-    printf("[DEBUG] ler_coordinate_array: Successfully read %zu coordinates\n", arr->count);
+    printf("[DEBUG] ler_ponto_array: Successfully read %zu pontos\n", arr->count);
 #endif
     return 1;
 }
 
-int anexar_coordinate_array(FILE *arquivo, CoordinateArray *arr) {
+int anexar_ponto_array(FILE *arquivo, PontoArray *arr) {
     if (arquivo == NULL || arr == NULL || arr->array == NULL) {
 #ifdef VERBOSE
-        printf("[DEBUG] anexar_coordinate_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
+        printf("[DEBUG] anexar_ponto_array: Invalid parameters (arquivo=%p, arr=%p, arr->array=%p)\n", 
                (void*)arquivo, (void*)arr, arr ? (void*)arr->array : NULL);
 #endif
         return 0;
     }
     
-    Coordinate coord;
+    Ponto coord;
     size_t initial_count = arr->count;
     while (fscanf(arquivo, "%lf %lf", &coord.x, &coord.y) == 2) {
-        if (!inserir_coordinate_array(arr, coord)) {
+        if (!inserir_ponto_array(arr, coord)) {
 #ifdef VERBOSE
-            printf("[DEBUG] anexar_coordinate_array: Failed to insert coordinate\n");
+            printf("[DEBUG] anexar_ponto_array: Failed to insert ponto\n");
 #endif
             return 0;
         }
     }
     
 #ifdef VERBOSE
-    printf("[DEBUG] anexar_coordinate_array: Successfully appended %zu coordinates\n", arr->count - initial_count);
+    printf("[DEBUG] anexar_ponto_array: Successfully appended %zu pontos\n", arr->count - initial_count);
 #endif
     return 1;
 }

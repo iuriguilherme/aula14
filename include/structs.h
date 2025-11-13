@@ -4,26 +4,14 @@
 #include <stddef.h>
 
 typedef struct {
-    size_t size;
-    size_t count;
-    int *array;
-} IntArray;
-
-typedef struct {
-    size_t size;
-    size_t count;
-    double *array;
-} DoubleArray;
-
-typedef struct {
     double x;
     double y;
-} Coordinate;
+} Ponto;
 
 typedef struct {
     size_t size;
     size_t count;
-    Coordinate *array;
-} CoordinateArray;
+    Ponto *array;
+} PontoArray;
 
 #endif // STRUCTS_H

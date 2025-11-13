@@ -47,3 +47,39 @@ void reverse_array(int **array, size_t *count) {
     
     reverse(*array, *array + *count - 1);
 }
+
+void bubble_sort_ponto(PontoArray *arr) {
+    if (arr == NULL || arr->array == NULL || arr->count <= 1) {
+        return;
+    }
+    
+    for (size_t i = 0; i < arr->count - 1; i++) {
+        for (size_t j = 0; j < arr->count - i - 1; j++) {
+            if (arr->array[j].x > arr->array[j + 1].x) {
+                Ponto temp = arr->array[j];
+                arr->array[j] = arr->array[j + 1];
+                arr->array[j + 1] = temp;
+            }
+        }
+    }
+}
+
+static void reverse_ponto(Ponto *inicio, Ponto *fim) {
+    if (inicio >= fim) {
+        return;
+    }
+    
+    Ponto temp = *inicio;
+    *inicio = *fim;
+    *fim = temp;
+    
+    reverse_ponto(inicio + 1, fim - 1);
+}
+
+void reverse_ponto_array(PontoArray *arr) {
+    if (arr == NULL || arr->array == NULL || arr->count <= 1) {
+        return;
+    }
+    
+    reverse_ponto(arr->array, arr->array + arr->count - 1);
+}

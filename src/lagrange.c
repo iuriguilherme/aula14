@@ -1,7 +1,7 @@
 #include "lagrange.h"
 #include "config.h"
 #include "structs.h"
-#include "coordinate_arrays.h"
+#include "pontos.h"
 #include "file_handler.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +12,7 @@
  * L(x) = Σ y_i * l_i(x)
  * onde l_i(x) = Π (x - x_j) / (x_i - x_j) para j ≠ i
  */
-double lagrange_interpolation(CoordinateArray *arr, double x) {
+double lagrange_interpolation(PontoArray *arr, double x) {
     double result = 0.0;
     
     for (size_t i = 0; i < arr->count; i++) {
@@ -33,7 +33,7 @@ double lagrange_interpolation(CoordinateArray *arr, double x) {
 /*
  * Exibe o polinômio de Lagrange em forma simbólica
  */
-void display_polynomial(CoordinateArray *arr) {
+void display_polynomial(PontoArray *arr) {
     printf("\nPolinômio Interpolador de Lagrange:\n");
     printf("L(x) = ");
     
@@ -69,7 +69,7 @@ void display_polynomial(CoordinateArray *arr) {
 /*
  * Exibe os pontos dados
  */
-void display_points(CoordinateArray *arr) {
+void display_points(PontoArray *arr) {
     printf("\nPontos fornecidos:\n");
     printf("  i  |    x    |    y\n");
     printf("-----|---------|----------\n");
@@ -82,7 +82,7 @@ void display_points(CoordinateArray *arr) {
  * Gera um valor padrão de x baseado no intervalo dos pontos dados
  * Retorna o ponto médio entre o menor e maior valor de x
  */
-double gerar_x_padrao(CoordinateArray *arr) {
+double gerar_x_padrao(PontoArray *arr) {
     if (arr->count == 0) {
         return 0.0;
     }
@@ -105,7 +105,7 @@ double gerar_x_padrao(CoordinateArray *arr) {
 /*
  * Exporta os dados para um arquivo JSON para visualização
  */
-void exportar_json(CoordinateArray *arr, const char *filename) {
+void exportar_json(PontoArray *arr, const char *filename) {
     FILE *json_file = fopen(filename, "w");
     if (!json_file) {
 #ifdef VERBOSE
@@ -160,12 +160,12 @@ void exportar_json(CoordinateArray *arr, const char *filename) {
 }
 
 void executar_lagrange(const char *nome_arquivo) {
-    CoordinateArray arr;
+    PontoArray arr;
     
     printf("=== Interpolador Polinomial de Lagrange ===\n\n");
     
     // Criar array de coordenadas
-    if (!criar_coordinate_array(&arr, MAX_POINTS)) {
+    if (!criar_ponto_array(&arr, MAX_POINTS)) {
         printf("Erro ao criar array de coordenadas.\n");
         return;
     }
@@ -178,7 +178,7 @@ void executar_lagrange(const char *nome_arquivo) {
         return;
     }
     
-    if (ler_coordinate_array(file, &arr) != 1) {
+    if (ler_ponto_array(file, &arr) != 1) {
         printf("Erro ao ler coordenadas do arquivo.\n");
         fclose(file);
         free(arr.array);

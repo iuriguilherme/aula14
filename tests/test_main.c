@@ -2,6 +2,9 @@
 #include <stdio.h>
 
 int main(void) {
+#ifdef DEBUG
+    printf("[DEBUG] Test suite running in DEBUG mode\n");
+#endif
     printf("Starting tests...\n");
     
     if (run_all_tests()) {
