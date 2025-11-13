@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 
-static int test_bubble_sort_ponto(void) {
+static bool test_bubble_sort_ponto(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_bubble_sort_ponto: Starting test\n");
 #endif
@@ -25,7 +26,7 @@ static int test_bubble_sort_ponto(void) {
         if (fabs(arr.array[i].x - expected_x[i]) > 1e-9) {
             printf("FAIL: bubble_sort_ponto - incorrect order at index %zu\n", i);
             free(arr.array);
-            return 0;
+            return false;
         }
     }
     
@@ -34,10 +35,10 @@ static int test_bubble_sort_ponto(void) {
     printf("[DEBUG] test_bubble_sort_ponto: Test passed\n");
 #endif
     printf("PASS: bubble_sort_ponto\n");
-    return 1;
+    return true;
 }
 
-static int test_reverse_ponto(void) {
+static bool test_reverse_ponto(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_reverse_ponto: Starting test\n");
 #endif
@@ -57,7 +58,7 @@ static int test_reverse_ponto(void) {
         if (fabs(arr.array[i].x - expected_x[i]) > 1e-9) {
             printf("FAIL: reverse_ponto - incorrect order at index %zu\n", i);
             free(arr.array);
-            return 0;
+            return false;
         }
     }
     
@@ -66,10 +67,10 @@ static int test_reverse_ponto(void) {
     printf("[DEBUG] test_reverse_ponto: Test passed\n");
 #endif
     printf("PASS: reverse_ponto\n");
-    return 1;
+    return true;
 }
 
-static int test_reverse_ponto_even(void) {
+static bool test_reverse_ponto_even(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_reverse_ponto_even: Starting test\n");
 #endif
@@ -88,7 +89,7 @@ static int test_reverse_ponto_even(void) {
         if (fabs(arr.array[i].x - expected_x[i]) > 1e-9) {
             printf("FAIL: reverse_ponto (even) - incorrect order at index %zu\n", i);
             free(arr.array);
-            return 0;
+            return false;
         }
     }
     
@@ -97,19 +98,19 @@ static int test_reverse_ponto_even(void) {
     printf("[DEBUG] test_reverse_ponto_even: Test passed\n");
 #endif
     printf("PASS: reverse_ponto (even)\n");
-    return 1;
+    return true;
 }
 
-int test_ordering(void) {
+bool test_ordering(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_ordering: Starting test suite\n");
 #endif
     printf("\n=== Testing ordering ===\n");
     int passed = 0;
     
-    passed += test_bubble_sort_ponto();
-    passed += test_reverse_ponto();
-    passed += test_reverse_ponto_even();
+    if (test_bubble_sort_ponto()) passed++;
+    if (test_reverse_ponto()) passed++;
+    if (test_reverse_ponto_even()) passed++;
     
 #ifdef DEBUG
     printf("[DEBUG] test_ordering: Test suite completed with %d/3 passed\n", passed);

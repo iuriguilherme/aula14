@@ -1,12 +1,13 @@
 #include "tests.h"
 #include <stdio.h>
+#include <stdbool.h>
 
-extern int test_ponto_arrays(void);
-extern int test_ordering(void);
-extern int test_file_operations(void);
-extern int test_generator(void);
+extern bool test_ponto_arrays(void);
+extern bool test_ordering(void);
+extern bool test_file_operations(void);
+extern bool test_generator(void);
 
-int run_all_tests(void) {
+bool run_all_tests(void) {
 #ifdef DEBUG
     printf("[DEBUG] run_all_tests: Starting all test suites\n");
 #endif

@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 
-static int test_criar_ponto_array(void) {
+static bool test_criar_ponto_array(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_criar_ponto_array: Starting test\n");
 #endif
@@ -12,13 +13,13 @@ static int test_criar_ponto_array(void) {
     
     if (!criar_ponto_array(&arr, 10)) {
         printf("FAIL: criar_ponto_array - failed to create array\n");
-        return 0;
+        return false;
     }
     
     if (arr.size != 10 || arr.count != 0 || arr.array == NULL) {
         printf("FAIL: criar_ponto_array - incorrect initialization\n");
         free(arr.array);
-        return 0;
+        return false;
     }
     
     free(arr.array);
@@ -26,10 +27,10 @@ static int test_criar_ponto_array(void) {
     printf("[DEBUG] test_criar_ponto_array: Test passed\n");
 #endif
     printf("PASS: criar_ponto_array\n");
-    return 1;
+    return true;
 }
 
-static int test_inserir_ponto_array(void) {
+static bool test_inserir_ponto_array(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_inserir_ponto_array: Starting test\n");
 #endif
@@ -40,13 +41,13 @@ static int test_inserir_ponto_array(void) {
     if (!inserir_ponto_array(&arr, c1)) {
         printf("FAIL: inserir_ponto_array - failed to insert first element\n");
         free(arr.array);
-        return 0;
+        return false;
     }
     
     if (arr.count != 1 || fabs(arr.array[0].x - 1.0) > 0.001 || fabs(arr.array[0].y - 2.0) > 0.001) {
         printf("FAIL: inserir_ponto_array - incorrect value or count\n");
         free(arr.array);
-        return 0;
+        return false;
     }
     
     Ponto c2 = {3.0, 4.0};
@@ -57,7 +58,7 @@ static int test_inserir_ponto_array(void) {
     if (arr.count != 3 || arr.size < 3) {
         printf("FAIL: inserir_ponto_array - reallocation failed\n");
         free(arr.array);
-        return 0;
+        return false;
     }
     
     free(arr.array);
@@ -65,18 +66,18 @@ static int test_inserir_ponto_array(void) {
     printf("[DEBUG] test_inserir_ponto_array: Test passed\n");
 #endif
     printf("PASS: inserir_ponto_array\n");
-    return 1;
+    return true;
 }
 
-int test_ponto_arrays(void) {
+bool test_ponto_arrays(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_ponto_arrays: Starting test suite\n");
 #endif
     printf("\n=== Testing ponto_arrays ===\n");
     int passed = 0;
     
-    passed += test_criar_ponto_array();
-    passed += test_inserir_ponto_array();
+    if (test_criar_ponto_array()) passed++;
+    if (test_inserir_ponto_array()) passed++;
     
 #ifdef DEBUG
     printf("[DEBUG] test_ponto_arrays: Test suite completed with %d/2 passed\n", passed);

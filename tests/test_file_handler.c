@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 
-int test_file_operations(void) {
+bool test_file_operations(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_file_operations: Starting test\n");
 #endif
@@ -26,7 +27,7 @@ int test_file_operations(void) {
         printf("FAIL: file_handler - failed to write ponto array\n");
         if (f) fclose(f);
         free(arr1.array);
-        return 0;
+        return false;
     }
     fclose(f);
     
@@ -39,7 +40,7 @@ int test_file_operations(void) {
         printf("FAIL: file_handler - failed to read ponto array\n");
         if (f) fclose(f);
         free(arr1.array);
-        return 0;
+        return false;
     }
     fclose(f);
     
@@ -50,7 +51,7 @@ int test_file_operations(void) {
         printf("FAIL: file_handler - count mismatch\n");
         free(arr1.array);
         free(arr2.array);
-        return 0;
+        return false;
     }
     
     for (size_t i = 0; i < arr1.count; i++) {
@@ -59,7 +60,7 @@ int test_file_operations(void) {
             printf("FAIL: file_handler - value mismatch at index %zu\n", i);
             free(arr1.array);
             free(arr2.array);
-            return 0;
+            return false;
         }
     }
     
@@ -70,5 +71,5 @@ int test_file_operations(void) {
 #endif
     printf("PASS: file_handler ponto array operations\n");
     printf("file_handler: 1/1 tests passed\n");
-    return 1;
+    return true;
 }

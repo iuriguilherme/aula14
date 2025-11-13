@@ -14,7 +14,7 @@
  * Tecnologias de IA Gerativa Utilizadas: GitHub Copilot, Claude Sonnet 4.5
  * Ambiente de Desenvolvimento: VSCode
  * Linguagem de Programação: C (Padrão C17)
- * Bibliotecas Utilizadas: stdio.h, stdlib.h, string.h, time.h, stddef.h
+ * Bibliotecas Utilizadas: stdio.h, stdlib.h, string.h, time.h, stddef.h, stdbool.h
  * 
  */
 

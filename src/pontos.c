@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int criar_ponto_array(PontoArray *arr, size_t size) {
+bool criar_ponto_array(PontoArray *arr, size_t size) {
     if (arr == NULL || size == 0) {
 #ifdef VERBOSE
         printf("[DEBUG] criar_ponto_array: Invalid parameters (arr=%p, size=%zu)\n", 
                (void*)arr, size);
 #endif
-        return 0;
+        return false;
     }
     
     arr->array = (Ponto *)malloc(size * sizeof(Ponto));
@@ -17,7 +17,7 @@ int criar_ponto_array(PontoArray *arr, size_t size) {
 #ifdef VERBOSE
         printf("[DEBUG] criar_ponto_array: malloc failed for size %zu\n", size);
 #endif
-        return 0;
+        return false;
     }
     
     arr->size = size;
@@ -26,16 +26,16 @@ int criar_ponto_array(PontoArray *arr, size_t size) {
 #ifdef VERBOSE
     printf("[DEBUG] criar_ponto_array: Successfully created array with size %zu\n", size);
 #endif
-    return 1;
+    return true;
 }
 
-int realocar_ponto_array(PontoArray *arr, size_t new_size) {
+bool realocar_ponto_array(PontoArray *arr, size_t new_size) {
     if (arr == NULL || arr->array == NULL) {
 #ifdef VERBOSE
         printf("[DEBUG] realocar_ponto_array: Invalid parameters (arr=%p, arr->array=%p)\n", 
                (void*)arr, arr ? (void*)arr->array : NULL);
 #endif
-        return 0;
+        return false;
     }
     
     Ponto *temp = (Ponto *)realloc(arr->array, new_size * sizeof(Ponto));
@@ -45,7 +45,7 @@ int realocar_ponto_array(PontoArray *arr, size_t new_size) {
         printf("[DEBUG] realocar_ponto_array: realloc failed from size %zu to %zu\n", 
                arr->size, new_size);
 #endif
-        return 0;
+        return false;
     }
     
     arr->array = temp;
@@ -57,16 +57,16 @@ int realocar_ponto_array(PontoArray *arr, size_t new_size) {
 #ifdef VERBOSE
     printf("[DEBUG] realocar_ponto_array: Successfully reallocated to size %zu\n", new_size);
 #endif
-    return 1;
+    return true;
 }
 
-int inserir_ponto_array(PontoArray *arr, Ponto value) {
+bool inserir_ponto_array(PontoArray *arr, Ponto value) {
     if (arr == NULL || arr->array == NULL) {
 #ifdef VERBOSE
         printf("[DEBUG] inserir_ponto_array: Invalid parameters (arr=%p, arr->array=%p)\n", 
                (void*)arr, arr ? (void*)arr->array : NULL);
 #endif
-        return 0;
+        return false;
     }
     
     if (arr->count >= arr->size) {
@@ -79,7 +79,7 @@ int inserir_ponto_array(PontoArray *arr, Ponto value) {
 #ifdef VERBOSE
             printf("[DEBUG] inserir_ponto_array: Reallocation failed\n");
 #endif
-            return 0;
+            return false;
         }
     }
     
@@ -90,16 +90,16 @@ int inserir_ponto_array(PontoArray *arr, Ponto value) {
     printf("[DEBUG] inserir_ponto_array: Inserted ponto (%.2f, %.2f) at index %zu\n", 
            value.x, value.y, arr->count - 1);
 #endif
-    return 1;
+    return true;
 }
 
-int inserir_ponto_array_indice(PontoArray *arr, size_t index, Ponto value) {
+bool inserir_ponto_array_indice(PontoArray *arr, size_t index, Ponto value) {
     if (arr == NULL || arr->array == NULL) {
 #ifdef VERBOSE
         printf("[DEBUG] inserir_ponto_array_indice: Invalid parameters (arr=%p, arr->array=%p)\n", 
                (void*)arr, arr ? (void*)arr->array : NULL);
 #endif
-        return 0;
+        return false;
     }
     
     if (index > arr->count) {
@@ -107,7 +107,7 @@ int inserir_ponto_array_indice(PontoArray *arr, size_t index, Ponto value) {
         printf("[DEBUG] inserir_ponto_array_indice: Invalid index %zu (count=%zu)\n", 
                index, arr->count);
 #endif
-        return 0;
+        return false;
     }
     
     if (arr->count >= arr->size) {
@@ -120,7 +120,7 @@ int inserir_ponto_array_indice(PontoArray *arr, size_t index, Ponto value) {
 #ifdef VERBOSE
             printf("[DEBUG] inserir_ponto_array_indice: Reallocation failed\n");
 #endif
-            return 0;
+            return false;
         }
     }
     
@@ -135,5 +135,5 @@ int inserir_ponto_array_indice(PontoArray *arr, size_t index, Ponto value) {
     printf("[DEBUG] inserir_ponto_array_indice: Inserted ponto (%.2f, %.2f) at index %zu\n", 
            value.x, value.y, index);
 #endif
-    return 1;
+    return true;
 }

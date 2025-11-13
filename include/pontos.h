@@ -3,10 +3,11 @@
 
 #include "structs.h"
 #include <stddef.h>
+#include <stdbool.h>
 
-int criar_ponto_array(PontoArray *arr, size_t size);
-int realocar_ponto_array(PontoArray *arr, size_t new_size);
-int inserir_ponto_array(PontoArray *arr, Ponto value);
-int inserir_ponto_array_indice(PontoArray *arr, size_t index, Ponto value);
+bool criar_ponto_array(PontoArray *arr, size_t size);
+bool realocar_ponto_array(PontoArray *arr, size_t new_size);
+bool inserir_ponto_array(PontoArray *arr, Ponto value);
+bool inserir_ponto_array_indice(PontoArray *arr, size_t index, Ponto value);
 
 #endif // PONTOS_H

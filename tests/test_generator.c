@@ -6,8 +6,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <stdbool.h>
 
-int test_generator(void) {
+bool test_generator(void) {
 #ifdef DEBUG
     printf("[DEBUG] test_generator: Starting test suite\n");
 #endif
@@ -69,7 +70,7 @@ int test_generator(void) {
     criar_ponto_array(&arr2, 10);
     
     file = abrir_arquivo(test_file);
-    if (file && ler_ponto_array(file, &arr2) == 1) {
+    if (file && ler_ponto_array(file, &arr2)) {
         fclose(file);
         
         if (arr2.count == 3 &&
