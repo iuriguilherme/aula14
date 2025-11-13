@@ -14,6 +14,8 @@ Este projeto implementa um interpolador polinomial completo usando o método de 
 - **Interpolação de Lagrange**: Calcula o polinômio que passa por todos os pontos
 - **Exibição simbólica**: Mostra o polinômio interpolador em notação matemática
 - **Cálculo interativo**: Permite calcular valores interpolados com sugestão de valor padrão
+- **Exportação JSON**: Gera arquivo JSON com dados originais e interpolados
+- **Visualização gráfica**: Interface HTML interativa para visualizar a interpolação
 - **Validação automática**: Verifica a existência e validade do arquivo de pontos
 - **Arrays dinâmicos**: Gerenciamento inteligente de memória com realocação automática
 - **Modo debug**: Mensagens detalhadas de depuração com a flag `-DVERBOSE`
@@ -176,9 +178,32 @@ Pontos fornecidos:
 Digite o valor de x [padrão: 0.0000] (ou 'q' para sair): 
 Usando padrão: 0.0000
 L(0.0000) = 3.670000
+
+Deseja calcular outro valor? (s/n): n
+
+Programa finalizado.
+
+Dados exportados para 'interpolacao.json' para visualização.
 ```
 
-### Exemplo 3: Modo Debug
+### Exemplo 3: Visualizando os resultados graficamente
+
+Após executar o programa, um arquivo `interpolacao.json` é criado. Para visualizar:
+
+```bash
+# Abra visualizar.html no navegador
+firefox visualizar.html
+# ou
+google-chrome visualizar.html
+# ou simplesmente abra o arquivo com seu navegador padrão
+```
+
+O gráfico mostrará:
+- **Pontos originais** (em vermelho)
+- **Curva interpolada** (em azul) com 100 pontos calculados
+- **Estatísticas** sobre os dados (número de pontos, intervalo, grau do polinômio)
+
+### Exemplo 4: Modo Debug
 
 ```bash
 $ make debug

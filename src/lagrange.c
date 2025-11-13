@@ -102,6 +102,63 @@ double gerar_x_padrao(CoordinateArray *arr) {
     return (x_min + x_max) / 2.0;
 }
 
+/*
+ * Exporta os dados para um arquivo JSON para visualização
+ */
+void exportar_json(CoordinateArray *arr, const char *filename) {
+    FILE *json_file = fopen(filename, "w");
+    if (!json_file) {
+#ifdef VERBOSE
+        printf("[DEBUG] exportar_json: Failed to create file '%s'\n", filename);
+#endif
+        return;
+    }
+    
+    // Find x range
+    double x_min = arr->array[0].x;
+    double x_max = arr->array[0].x;
+    
+    for (size_t i = 1; i < arr->count; i++) {
+        if (arr->array[i].x < x_min) x_min = arr->array[i].x;
+        if (arr->array[i].x > x_max) x_max = arr->array[i].x;
+    }
+    
+    // Generate interpolated points
+    double range = x_max - x_min;
+    double step = range / 100.0; // 100 points for smooth curve
+    
+    fprintf(json_file, "{\n");
+    fprintf(json_file, "  \"originalPoints\": [\n");
+    
+    // Write original points
+    for (size_t i = 0; i < arr->count; i++) {
+        fprintf(json_file, "    {\"x\": %.6f, \"y\": %.6f}%s\n",
+                arr->array[i].x, arr->array[i].y,
+                (i < arr->count - 1) ? "," : "");
+    }
+    
+    fprintf(json_file, "  ],\n");
+    fprintf(json_file, "  \"interpolatedPoints\": [\n");
+    
+    // Write interpolated points
+    for (int i = 0; i <= 100; i++) {
+        double x = x_min + (step * i);
+        double y = lagrange_interpolation(arr, x);
+        fprintf(json_file, "    {\"x\": %.6f, \"y\": %.6f}%s\n",
+                x, y, (i < 100) ? "," : "");
+    }
+    
+    fprintf(json_file, "  ]\n");
+    fprintf(json_file, "}\n");
+    
+    fclose(json_file);
+    
+#ifdef VERBOSE
+    printf("[DEBUG] exportar_json: Successfully exported to '%s'\n", filename);
+#endif
+    printf("\nDados exportados para '%s' para visualização.\n", filename);
+}
+
 void executar_lagrange(const char *nome_arquivo) {
     CoordinateArray arr;
     
@@ -185,6 +242,9 @@ void executar_lagrange(const char *nome_arquivo) {
     } while (1);
     
     printf("\nPrograma finalizado.\n");
+    
+    // Exportar dados para JSON
+    exportar_json(&arr, "interpolacao.json");
     
     // Liberar memória
     free(arr.array);

@@ -37,6 +37,33 @@ void inicializar_arquivo(const char *nome_arquivo) {
 #ifdef VERBOSE
             printf("Arquivo %s encontrado com %zu coordenadas válidas.\n", nome_arquivo, arr.count);
 #endif
+            
+            // Show existing points (limit display to 20 points for readability)
+            printf("\nArquivo %s contém %zu coordenadas válidas.\n", nome_arquivo, arr.count);
+            printf("Pontos existentes:\n");
+            
+            size_t display_count = (arr.count > 20) ? 20 : arr.count;
+            for (size_t i = 0; i < display_count; i++) {
+                printf("  %zu: (%.4f, %.4f)\n", i + 1, arr.array[i].x, arr.array[i].y);
+            }
+            
+            if (arr.count > 20) {
+                printf("  ... (%zu pontos não exibidos)\n", arr.count - 20);
+            }
+            
+            // Ask if user wants to regenerate
+            printf("\nDeseja gerar novos pontos? (Os dados existentes serão sobrescritos) [padrão: n] (s/n): ");
+            char buffer[100];
+            if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+                if (buffer[0] == 's' || buffer[0] == 'S') {
+                    printf("Gerando novos pontos...\n");
+                    needs_generation = 1;
+                } else {
+                    printf("Usando pontos existentes.\n");
+                }
+            } else {
+                printf("Usando pontos existentes.\n");
+            }
         } else {
             // File exists but is empty or invalid
 #ifdef VERBOSE
