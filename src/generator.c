@@ -75,33 +75,50 @@ static int gerar_cubica(CoordinateArray *arr, int num_pontos) {
 void gerar_pontos(const char *nome_arquivo) {
     int num_pontos;
     int tipo_funcao;
+    int sugestao_pontos;
     
     // Inicializa gerador de números aleatórios
     srand(time(NULL));
     
-    // Pergunta quantos pontos gerar
-    printf("Quantos pontos deseja gerar? [padrão: 3] ");
-    char buffer[100];
-    if (fgets(buffer, sizeof(buffer), stdin) == NULL || buffer[0] == '\n') {
-        num_pontos = 3; // Padrão
-        printf("Usando padrão: 3 pontos\n");
-    } else if (sscanf(buffer, "%d", &num_pontos) != 1 || num_pontos <= 0) {
-        printf("Número inválido! Usando padrão: 3 pontos\n");
-        num_pontos = 3;
-    }
-    
-    // Pergunta o tipo de função
+    // Primeiro: Pergunta o tipo de função
     printf("\nEscolha o tipo de função:\n");
     printf("1 - Linear (f(x) = ax + b) [padrão]\n");
     printf("2 - Quadrática (f(x) = ax² + bx + c)\n");
     printf("3 - Cúbica (f(x) = ax³ + bx² + cx + d)\n");
     printf("Opção: ");
+    
+    char buffer[100];
     if (fgets(buffer, sizeof(buffer), stdin) == NULL || buffer[0] == '\n') {
         tipo_funcao = 1; // Padrão: linear
         printf("Usando padrão: Linear\n");
     } else if (sscanf(buffer, "%d", &tipo_funcao) != 1 || tipo_funcao < 1 || tipo_funcao > 3) {
         printf("Opção inválida! Usando padrão: Linear\n");
         tipo_funcao = 1;
+    }
+    
+    // Define sugestão de pontos baseada no tipo de função
+    switch (tipo_funcao) {
+        case 1:
+            sugestao_pontos = 3;  // Linear: 2 pontos mínimos, 3 para melhor interpolação
+            break;
+        case 2:
+            sugestao_pontos = 5;  // Quadrática: mais pontos para capturar curvatura
+            break;
+        case 3:
+            sugestao_pontos = 7;  // Cúbica: ainda mais pontos para inflexões
+            break;
+        default:
+            sugestao_pontos = 3;
+    }
+    
+    // Segundo: Pergunta quantos pontos gerar (com sugestão dinâmica)
+    printf("\nQuantos pontos deseja gerar? [sugerido: %d] ", sugestao_pontos);
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL || buffer[0] == '\n') {
+        num_pontos = sugestao_pontos;
+        printf("Usando sugestão: %d pontos\n", num_pontos);
+    } else if (sscanf(buffer, "%d", &num_pontos) != 1 || num_pontos <= 0) {
+        printf("Número inválido! Usando sugestão: %d pontos\n", sugestao_pontos);
+        num_pontos = sugestao_pontos;
     }
     
     // Cria array de coordenadas
