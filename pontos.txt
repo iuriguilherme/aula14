@@ -1,9 +1,3 @@
-# Arquivo de pontos para interpolação de Lagrange
-# Formato: x y (um par por linha)
-# Linhas começando com # são comentários
-
-# Exemplo 1: Pontos de uma função quadrática f(x) = x^2
-0.0 0.0
-1.0 1.0
-2.0 4.0
-3.0 9.0
+-7.308453 -38.838388
+-3.104920 -18.408454
+-8.835342 -46.259344

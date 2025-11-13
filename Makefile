@@ -2,6 +2,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -O2
+DEBUG_CFLAGS = -Wall -Wextra -std=c11 -g -DVERBOSE
 SRCDIR = src
 TESTDIR = tests
 INCDIR = include
@@ -15,7 +16,8 @@ MAIN_SOURCES = $(SRCDIR)/main.c \
                $(SRCDIR)/double_arrays.c \
                $(SRCDIR)/coordinate_arrays.c \
                $(SRCDIR)/file_handler.c \
-               $(SRCDIR)/ordering.c
+               $(SRCDIR)/ordering.c \
+               $(SRCDIR)/generator.c
 
 # Source files for tests
 TEST_SOURCES = $(TESTDIR)/test_main.c \
@@ -31,7 +33,8 @@ LIB_SOURCES = $(SRCDIR)/int_arrays.c \
               $(SRCDIR)/double_arrays.c \
               $(SRCDIR)/coordinate_arrays.c \
               $(SRCDIR)/file_handler.c \
-              $(SRCDIR)/ordering.c
+              $(SRCDIR)/ordering.c \
+              $(SRCDIR)/generator.c
 
 OBJDIR = obj
 MAIN_OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(MAIN_SOURCES))
@@ -73,6 +76,11 @@ clean:
 run: $(TARGET)
 	$(TARGET)
 
+# Compilar em modo debug com mensagens verbose
+debug: CFLAGS = $(DEBUG_CFLAGS)
+debug: clean $(TARGET)
+	$(TARGET)
+
 # Compilar e executar testes
 test: $(TEST_TARGET)
 	$(TEST_TARGET)
@@ -83,7 +91,8 @@ help:
 	@echo "  make         - Compila o programa"
 	@echo "  make clean   - Remove arquivos compilados"
 	@echo "  make run     - Compila e executa o programa"
+	@echo "  make debug   - Compila em modo debug e executa (com mensagens verbose)"
 	@echo "  make test    - Compila e executa os testes"
 	@echo "  make help    - Exibe esta mensagem de ajuda"
 
-.PHONY: all clean run test help
+.PHONY: all clean run debug test help
