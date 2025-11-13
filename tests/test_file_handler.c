@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 bool test_file_operations(void) {
 #ifdef DEBUG
@@ -66,6 +67,10 @@ bool test_file_operations(void) {
     
     free(arr1.array);
     free(arr2.array);
+    
+    // Cleanup test file
+    unlink("test_pontos.txt");
+    
 #ifdef DEBUG
     printf("[DEBUG] test_file_operations: Test passed\n");
 #endif
