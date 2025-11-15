@@ -97,6 +97,7 @@ bool anexar_ponto_array(FILE *arquivo, PontoArray *arr) {
         return false;
     }
     
+    size_t initial_count = arr->count;
     Ponto coord;
     while (fscanf(arquivo, "%lf %lf", &coord.x, &coord.y) == 2) {
         if (!inserir_ponto_array(arr, coord)) {
