@@ -1,5 +1,5 @@
 #include "lagrange.h"
-#include "config.h"
+#include "local_config.h"
 #include "structs.h"
 #include "pontos.h"
 #include "file_handler.h"
