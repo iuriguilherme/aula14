@@ -31,21 +31,23 @@ aula14/
 │   ├── generator.c    # Geração de pontos aleatórios
 │   ├── lagrange.c     # Interpolação polinomial
 │   ├── file_handler.c # Operações de leitura/escrita
-│   ├── coordinate_arrays.c    # Manipulação de arrays de coordenadas
-│   ├── int_arrays.c           # Manipulação de arrays de inteiros
-│   ├── double_arrays.c        # Manipulação de arrays de doubles
+│   ├── pontos.c       # Manipulação de arrays de pontos
 │   └── ordering.c     # Algoritmos de ordenação e reversão
 ├── include/           # Arquivos de cabeçalho
 │   ├── structs.h      # Definições de estruturas de dados
-│   ├── config.h       # Configurações do projeto
+│   ├── local_config.h # Configurações do projeto
 │   └── *.h            # Headers de cada módulo
 ├── tests/             # Suite de testes
 │   ├── test_*.c       # Testes unitários para cada módulo
 │   └── test_runner.c  # Coordenador de testes
-├── obj/               # Arquivos objeto (gerado)
-├── build/             # Executáveis (gerado)
+├── .roo/              # Regras para agentes AI
+│   ├── rules-architect/
+│   ├── rules-ask/
+│   ├── rules-code/
+│   └── rules-debug/
+├── visualizar.html    # Interface web para visualização
+├── AGENTS.md          # Guia para agentes de desenvolvimento
 └── Makefile           # Sistema de compilação
-
 ```
 
 ## Método de Lagrange
@@ -96,12 +98,6 @@ O programa irá:
 Quando executado sem arquivo válido, o programa pergunta:
 
 ```
-Quantos pontos deseja gerar? [padrão: 3]
-```
-
-E depois:
-
-```
 Escolha o tipo de função:
 1 - Linear (f(x) = ax + b) [padrão]
 2 - Quadrática (f(x) = ax² + bx + c)
@@ -109,7 +105,15 @@ Escolha o tipo de função:
 Opção:
 ```
 
-Pressione Enter para usar os valores padrão (3 pontos, função linear).
+Depois:
+
+```
+Quantos pontos deseja gerar? [sugerido: 3]
+```
+
+O número sugerido varia conforme o tipo de função escolhida (3 para linear, 5 para quadrática, 7 para cúbica).
+
+Pressione Enter para usar os valores padrão.
 
 ### Calculando Valores Interpolados
 
@@ -126,7 +130,7 @@ Digite o valor de x [padrão: X.XXXX] (ou 'q' para sair):
 
 ### Formato do Arquivo de Entrada
 
-O arquivo `pontos.txt` deve conter pares de valores (x, y) por linha:
+O arquivo [`pontos.txt`](pontos.txt) deve conter pares de valores (x, y) por linha:
 
 ```
 0.0 0.0
@@ -141,12 +145,14 @@ O arquivo `pontos.txt` deve conter pares de valores (x, y) por linha:
 
 ```bash
 $ make run
-Quantos pontos deseja gerar? [padrão: 3] 5
 Escolha o tipo de função:
 1 - Linear (f(x) = ax + b) [padrão]
 2 - Quadrática (f(x) = ax² + bx + c)
 3 - Cúbica (f(x) = ax³ + bx² + cx + d)
 Opção: 2
+
+Quantos pontos deseja gerar? [sugerido: 5] 
+Usando sugestão: 5 pontos
 Gerando função quadrática: f(x) = 1.23x² + -2.45x + 3.67
 
 5 pontos gerados com sucesso em pontos.txt!
@@ -159,10 +165,21 @@ Arquivo lido com sucesso! Total de pontos: 5
 
 ### Exemplo 2: Usando arquivo existente
 
-Se `pontos.txt` já existe e é válido:
+Se [`pontos.txt`](pontos.txt) já existe e é válido:
 
 ```bash
 $ make run
+=== Gerador de Pontos ===
+
+Arquivo pontos.txt contém 5 coordenadas válidas.
+Pontos existentes:
+  1: (1.0000, 2.0000)
+  2: (2.0000, 4.0000)
+  ...
+
+Deseja gerar novos pontos? (Os dados existentes serão sobrescritos) [padrão: n] (s/n): n
+Usando pontos existentes.
+
 === Interpolador Polinomial de Lagrange ===
 
 Arquivo lido com sucesso! Total de pontos: 5
@@ -170,14 +187,14 @@ Arquivo lido com sucesso! Total de pontos: 5
 Pontos fornecidos:
   i  |    x    |    y
 -----|---------|----------
-   0 |   -8.23 |  95.4321
-   1 |   -2.14 |  12.3456
+   0 |    1.00 |    2.0000
+   1 |    2.00 |    4.0000
 ...
 
 --- Calcular valor interpolado ---
-Digite o valor de x [padrão: 0.0000] (ou 'q' para sair): 
-Usando padrão: 0.0000
-L(0.0000) = 3.670000
+Digite o valor de x [padrão: 3.0000] (ou 'q' para sair): 
+Usando padrão: 3.0000
+L(3.0000) = 6.000000
 
 Deseja calcular outro valor? (s/n): n
 
@@ -188,7 +205,7 @@ Dados exportados para 'interpolacao.json' para visualização.
 
 ### Exemplo 3: Visualizando os resultados graficamente
 
-Após executar o programa, um arquivo `interpolacao.json` é criado. Para visualizar:
+Após executar o programa, um arquivo [`interpolacao.json`](interpolacao.json) é criado. Para visualizar:
 
 ```bash
 # Abra visualizar.html no navegador
@@ -209,7 +226,7 @@ O gráfico mostrará:
 $ make debug
 [DEBUG] inicializar_arquivo: Checking file 'pontos.txt'
 [DEBUG] abrir_arquivo_modo: Successfully opened 'pontos.txt' with mode 'r'
-[DEBUG] ler_coordinate_array: Successfully read 5 coordinates
+[DEBUG] ler_ponto_array: Successfully read 5 pontos
 ...
 ```
 
@@ -226,7 +243,7 @@ make help    # Exibe ajuda do Makefile
 
 ## Configuração
 
-O arquivo `include/config.h` contém configurações importantes:
+O arquivo [`include/local_config.h`](include/local_config.h) contém configurações importantes:
 
 ```c
 #define MAX_POINTS 300  // Número máximo de pontos para interpolação
@@ -234,30 +251,30 @@ O arquivo `include/config.h` contém configurações importantes:
 
 ## Estruturas de Dados
 
-### Coordinate
+### Ponto
 ```c
 typedef struct {
     double x;
     double y;
-} Coordinate;
+} Ponto;
 ```
 
-### CoordinateArray
+### PontoArray
 ```c
 typedef struct {
     size_t size;         // Capacidade alocada
     size_t count;        // Número de elementos
-    Coordinate *array;   // Array dinâmico
-} CoordinateArray;
+    Ponto *array;        // Array dinâmico
+} PontoArray;
 ```
 
 ## Testes
 
 O projeto inclui testes para:
-- Manipulação de arrays (int, double, coordinate)
-- Operações de arquivo (leitura/escrita)
-- Algoritmos de ordenação e reversão
-- Geração de pontos
+- Manipulação de arrays de pontos ([`test_pontos.c`](tests/test_pontos.c))
+- Operações de arquivo ([`test_file_handler.c`](tests/test_file_handler.c))
+- Algoritmos de ordenação e reversão ([`test_ordering.c`](tests/test_ordering.c))
+- Geração de pontos ([`test_generator.c`](tests/test_generator.c))
 
 Execute:
 ```bash
@@ -270,19 +287,24 @@ make test
 - Make
 - Sistema operacional: Linux, macOS ou Windows (com MinGW)
 - Biblioteca matemática padrão (libm)
+- Navegador web moderno (para visualização gráfica)
 
 ## Limitações
 
-- Máximo de 300 pontos por padrão (configurável em `config.h`)
-- Pontos com valores x duplicados podem causar divisão por zero
+- Máximo de 300 pontos por padrão (configurável em [`local_config.h`](include/local_config.h))
+- Pontos com valores x duplicados causam divisão por zero na interpolação
+- Pontos gerados não são automaticamente ordenados por x
 - Extrapolação fora do intervalo de pontos pode ser imprecisa
+- Algoritmo de reversão recursivo pode causar stack overflow com arrays muito grandes (>1000 pontos)
 
 ## Notas Técnicas
 
 - **Padrão C**: C11 com flags `-Wall -Wextra`
-- **Gerenciamento de memória**: Arrays dinâmicos com realocação automática
+- **Gerenciamento de memória**: Arrays dinâmicos com realocação automática via [`PontoArray`](include/structs.h)
 - **Tratamento de erros**: Validação de parâmetros e verificação de falhas de alocação
-- **Debug**: Mensagens detalhadas disponíveis com `-DVERBOSE`
+- **Debug**: Mensagens detalhadas disponíveis com `-DVERBOSE` (não `-DDEBUG`)
+- **Complexidade**: Interpolação O(n²) por avaliação, sem otimizações ou memoização
+- **Arquivos fixos**: Entrada sempre de [`pontos.txt`](pontos.txt), saída sempre para [`interpolacao.json`](interpolacao.json)
 
 ## Autor
 
